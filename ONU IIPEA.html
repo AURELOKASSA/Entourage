@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Mon Entourage</title>
+    <style>
+        /* RESET ET VARIABLES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #8b5cf6;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --dark: #0f172a;
+            --darker: #1e293b;
+            --light: rgba(255,255,255,0.9);
+            --glass: rgba(255,255,255,0.05);
+            --glass-border: rgba(255,255,255,0.1);
+            --safe-area-top: env(safe-area-inset-top, 0px);
+            --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        /* STYLES DE BASE */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, var(--dark) 0%, var(--darker) 100%);
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            position: relative;
+            padding-top: var(--safe-area-top);
+            padding-bottom: var(--safe-area-bottom);
+        }
+
+        html {
+            height: -webkit-fill-available;
+        }
+
+        /* HEADER */
+        header {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: calc(20px + var(--safe-area-top)) 20px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: white;
+            font-size: clamp(2em, 8vw, 3.5em);
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+            letter-spacing: clamp(1px, 2vw, 2px);
+            word-break: break-word;
+        }
+
+        header p {
+            color: rgba(255,255,255,0.7);
+            font-size: clamp(0.9em, 4vw, 1.3em);
+            font-weight: 300;
+            letter-spacing: clamp(2px, 1.5vw, 3px);
+            text-transform: uppercase;
+            word-break: break-word;
+        }
+
+        /* MAIN */
+        main {
+            max-width: 1400px;
+            margin: clamp(30px, 6vw, 60px) auto;
+            padding: 0 clamp(15px, 4vw, 30px);
+        }
+
+        /* GRILLE RESPONSIVE */
+        .grille {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+            gap: clamp(20px, 4vw, 35px);
+        }
+
+        /* CARTES */
+        .carte {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: clamp(16px, 4vw, 24px);
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            position: relative;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* TOUCH/HOVER ADAPTATIF */
+        @media (hover: hover) {
+            .carte:hover {
+                transform: translateY(-10px) scale(1.02);
+                border-color: rgba(124, 58, 237, 0.5);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            }
+            
+            .carte:hover img {
+                transform: scale(1.1);
+                filter: grayscale(0%);
+            }
+        }
+
+        @media (hover: none) {
+            .carte:active {
+                background: rgba(255,255,255,0.1);
+            }
+        }
+
+        /* IMAGES RESPONSIVES */
+        .carte img {
+            width: 100%;
+            height: clamp(250px, 50vw, 320px);
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            filter: grayscale(30%);
+            aspect-ratio: 1/1;
+            display: block;
+            -webkit-touch-callout: none;
+        }
+
+        /* TEXTE */
+        .carte h3 {
+            color: white;
+            font-size: clamp(1.3em, 5vw, 1.8em);
+            margin: clamp(15px, 3vw, 20px) clamp(15px, 3vw, 20px) 5px;
+            font-weight: 600;
+            position: relative;
+            display: inline-block;
+            word-break: break-word;
+        }
+
+        .carte h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        @media (hover: hover) {
+            .carte:hover h3::after {
+                width: 50px;
+            }
+        }
+
+        .carte .role {
+            color: var(--primary);
+            font-size: clamp(0.9em, 4vw, 1.1em);
+            margin: 0 clamp(15px, 3vw, 20px) 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: clamp(1px, 1vw, 2px);
+            word-break: break-word;
+        }
+
+        .carte .description {
+            color: rgba(255,255,255,0.7);
+            margin: 0 clamp(15px, 3vw, 20px) 15px;
+            font-size: clamp(0.9em, 4vw, 1.1em);
+            line-height: 1.6;
+            font-style: italic;
+            word-break: break-word;
+        }
+
+        /* NUMERO DE TELEPHONE */
+        .telephone {
+            color: rgba(255,255,255,0.9);
+            margin: 0 clamp(15px, 3vw, 20px) 15px;
+            font-size: clamp(0.85em, 4vw, 1em);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 50px;
+            border: 1px dashed rgba(255,255,255,0.2);
+        }
+
+        .telephone span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .telephone i {
+            font-style: normal;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* BOUTONS D'ACTION */
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin: 0 clamp(15px, 3vw, 20px) clamp(20px, 4vw, 25px);
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: none;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            font-size: clamp(0.85em, 4vw, 0.95em);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            flex: 1;
+            min-width: 140px;
+            border: 1px solid rgba(255,255,255,0.1);
+            letter-spacing: 0.5px;
+        }
+
+        .btn i {
+            font-style: normal;
+            font-size: 1.2em;
+        }
+
+        .btn-appel {
+            background: linear-gradient(145deg, var(--success), #0d9488);
+        }
+
+        .btn-appel:hover, .btn-appel:active {
+            background: linear-gradient(145deg, #0d9488, var(--success));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-message {
+            background: linear-gradient(145deg, var(--primary), #7c3aed);
+        }
+
+        .btn-message:hover, .btn-message:active {
+            background: linear-gradient(145deg, #7c3aed, var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-whatsapp {
+            background: linear-gradient(145deg, #25D366, #128C7E);
+        }
+
+        .btn-whatsapp:hover, .btn-whatsapp:active {
+            background: linear-gradient(145deg, #128C7E, #25D366);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid var(--glass-border);
+            padding: calc(20px + var(--safe-area-bottom)) 20px 30px;
+            text-align: center;
+            color: rgba(255,255,255,0.6);
+            font-size: clamp(0.9em, 4vw, 1.1em);
+            letter-spacing: 2px;
+            margin-top: clamp(40px, 8vw, 80px);
+            position: relative;
+        }
+
+        /* ANIMATIONS OPTIMISEES */
+        @media (prefers-reduced-motion: no-preference) {
+            .carte {
+                animation: fadeInUp 0.6s ease-out forwards;
+                opacity: 0;
+            }
+            
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .carte:nth-child(1) { animation-delay: 0.1s; }
+            .carte:nth-child(2) { animation-delay: 0.2s; }
+            .carte:nth-child(3) { animation-delay: 0.3s; }
+            .carte:nth-child(4) { animation-delay: 0.4s; }
+            .carte:nth-child(5) { animation-delay: 0.5s; }
+            .carte:nth-child(6) { animation-delay: 0.6s; }
+        }
+
+        /* PREFERENCE REDUCTION MOUVEMENT */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ORIENTATION PAYSAGE MOBILE */
+        @media (orientation: landscape) and (max-height: 600px) {
+            header {
+                padding: calc(15px + var(--safe-area-top)) 20px 15px;
+            }
+            
+            .carte img {
+                height: 200px;
+            }
+            
+            .grille {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+
+        /* TABLETTES */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .grille {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .carte img {
+                height: 300px;
+            }
+        }
+
+        /* GRANDS ECRANS */
+        @media (min-width: 1400px) {
+            .grille {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* PETITS MOBILES */
+        @media (max-width: 380px) {
+            .carte h3 {
+                font-size: 1.2em;
+            }
+            
+            .carte p {
+                font-size: 0.85em;
+            }
+            
+            .carte img {
+                height: 220px;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                min-width: 120px;
+            }
+        }
+
+        /* SUPPORT NOTCH IPHONE */
+        @supports (padding: max(0px)) {
+            header {
+                padding-top: max(20px, env(safe-area-inset-top));
+            }
+            
+            footer {
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* ACCESSIBILITE */
+        .carte:focus-visible {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .btn:focus-visible {
+            outline: 3px solid white;
+            outline-offset: 2px;
+        }
+
+        /* AMELIORATION CONTRASTE */
+        .carte .description {
+            color: rgba(255,255,255,0.9);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>👥ONU IIPEA</h1>
+        <p>SANS NOUS LA CLASSE EST CHIANTE</p>
+    </header>
+    
+    <main>
+        <div class="grille">
+ 
+            <div class="carte" role="article">
+                <img src="c:\Users\OKASSA\Desktop\DOSSIER 1\BANK\A.png" alt="Portrait AUREL OKASSA" loading="lazy">
+                <h3>AUREL OKASSA </h3>
+                <p class="role">Le baseur sans limite </p>
+                <p class="description">AUREL DIOR </p>
+                <div class="telephone">
+                    <span>📱</span> +225 0160593479
+                </div>
+                <div class="actions">
+                    <a href="tel:+3225 0160593479" class="btn btn-appel">
+                        <i>📞</i> Appeler
+                    </a>
+                    <a href="sms:+225 0160593479" class="btn btn-message">
+                        <i>💬</i> SMS
+                    </a>
+                    <a href="https://wa.me/0160593479" target="_blank" class="btn btn-whatsapp">
+                        <i>📱</i> WhatsApp
+                    </a>
+                </div>
+            </div>
+            
+           
+            <div class="carte" role="article">
+                <img src="c:\Users\OKASSA\Desktop\DOSSIER 1\BANK\KIND.jfif" alt="Portrait CEDRIC" loading="lazy">
+                <h3>KOUASSI SIBA CEDRIC</h3>
+                <p class="role">LE CHOCO</p>
+                <p class="description"> Mon partenaire de projet</p>
+                <div class="telephone">
+                    <span>📱</span> +225 014240773
+                </div>
+                <div class="actions">
+                    <a href="tel:+225 014240773" class="btn btn-appel">
+                        <i>📞</i> Appeler
+                    </a>
+                    <a href="sms:+225 014240773" class="btn btn-message">
+                        <i>💬</i> SMS
+                    </a>
+                    <a href="https://wa.me/0142407737" target="_blank" class="btn btn-whatsapp">
+                        <i>📱</i> WhatsApp
+                    </a>
+                </div>
+            </div>
+            
+            
+            <div class="carte" role="article">
+                <img src="c:\Users\OKASSA\Desktop\DOSSIER 1\BANK\BLAY.jfif" alt="Portrait blay" loading="lazy">
+                <h3>BLAY ACCOSAY SAMUEL</h3>
+                <p class="role">Serviable</p>
+                <p class="description"> Mec calme </p>
+                <div class="telephone">
+                    <span>📱</span> +225 0574703026
+                </div>
+                <div class="actions">
+                    <a href="tel:+225 0574703026" class="btn btn-appel">
+                        <i>📞</i> Appeler
+                    </a>
+                    <a href="sms:+225 0574703026" class="btn btn-message">
+                        <i>💬</i> SMS
+                    </a>
+                    <a href="https://wa.me/0574703026" target="_blank" class="btn btn-whatsapp">
+                        <i>📱</i> WhatsApp
+                    </a>
+                </div>
+            </div>
+            
+            <div class="carte" role="article">
+                <img src="c:\Users\OKASSA\Desktop\DOSSIER 1\BANK\CEDRIC.jfif" alt="Portrait de CISSE" loading="lazy">
+                <h3>CISSE BACONGO</h3>
+                <p class="role">Force tranquille </p>
+                <p class="description"> LE BADEUR PAR EXELLENCE </p>
+                <div class="telephone">
+                    <span>📱</span> +225 0150484741
+                </div>
+                <div class="actions">
+                    <a href="tel:+225 0150484741" class="btn btn-appel">
+                        <i>📞</i> Appeler
+                    </a>
+                    <a href="sms:+225 0150484741" class="btn btn-message">
+                        <i>💬</i> SMS
+                    </a>
+                    <a href="https://wa.me/0150484741" target="_blank" class="btn btn-whatsapp">
+                        <i>📱</i> WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>© 2026 - Mon Entourage </p>
+        <p style="font-size: 0.8em; margin-top: 10px; opacity: 0.7;">AUREL OKASSA</p>
+    </footer>
+</body>
+</html>
